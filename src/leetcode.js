@@ -70,6 +70,7 @@ const getSession = async () => { // eslint-disable-line
   } catch (error) {
     const { username, password } = await getUsernameAndPass();
     const session = await login(username, password);
+    // NOTE expire
     fs.writeFile(
       `${homeDir}/.leetcode-site-generator.json`,
       JSON.stringify({
@@ -155,28 +156,7 @@ const getAcCode = async (questionSlug) => {
   return null;
 };
 
-const download = async () => {
-  const questions = await getAllACQuestions();
-  const isCodeDirExist = fs.existsSync(`${__dirname}/code`);
-  if (!isCodeDirExist) {
-    fs.mkdirSync(`${__dirname}/code`);
-  }
-  const aux = async (xs = []) => {
-    if (xs.length === 0) {
-      return;
-    }
-    const current = xs.shift();
-    const {
-      code,
-    } = await getAcCode(current.titleSlug);
-    fs.writeFile(`${__dirname}/code/${current.titleSlug}.md`, code, (err) => {
-      if (err) {
-        console.error(`${current.titleSlug} write error`);
-      }
-    });
-    aux(xs);
-  };
-  aux([...questions]);
+module.exports = {
+  getAllACQuestions,
+  getAcCode,
 };
-
-export default download;
