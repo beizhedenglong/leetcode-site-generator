@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const ora = require('ora');
 const { getAllACQuestions, getAcCode } = require('./leetcode');
 
 const toDoc = ({
@@ -28,8 +29,10 @@ ${code}
 };
 
 const download = async () => {
-  const codeDir = path.join(__dirname, 'docs');
+  // NOTE
+  const codeDir = path.join('docs');
   const questions = await getAllACQuestions();
+  const spinner = ora('Downloading accepted code.').start();
   const isCodeDirExist = fs.existsSync(codeDir);
   if (!isCodeDirExist) {
     fs.mkdirSync(codeDir);
@@ -45,6 +48,7 @@ const download = async () => {
     } = await getAcCode(current.titleSlug);
     current.code = code;
     current.lang = lang;
+    spinner.text = `${questions.length - xs.length}/${questions.length}: [${current.title}] has downloaded.`;
     fs.writeFile(path.join(codeDir, `${current.titleSlug}.md`), toDoc(current), (err) => {
       if (err) {
         console.error(`${current.titleSlug} write error`);

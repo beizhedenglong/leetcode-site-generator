@@ -1,15 +1,17 @@
 {
   "name": "leetcode-site-generator",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "repository": "https://github.com/beizhedenglong/leetcode-site-generator.git",
   "author": "Victor Wang <wang_shaojie@icloud.com>",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "commander": "^2.20.0",
     "enquirer": "^2.3.0",
     "graphql-request": "^1.8.2",
     "inquirer": "^6.2.2",
+    "ora": "^3.4.0",
     "request": "^2.88.0"
   },
   "devDependencies": {
