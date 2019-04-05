@@ -1,11 +1,9 @@
-const {
-  GraphQLClient,
-} = require('graphql-request');
+const { GraphQLClient } = require('graphql-request');
 const fs = require('fs');
 const os = require('os');
-const {
-  prompt,
-} = require('enquirer');
+const { prompt } = require('enquirer');
+const path = require('path');
+
 const {
   parseCookie,
   request,
@@ -61,8 +59,9 @@ const getUsernameAndPass = async () => prompt([
 
 
 const getSession = async () => { // eslint-disable-line
+  const sessionPath = path.join(homeDir, '/.leetcode-site-generator.json');
   try {
-    let json = fs.readFileSync(`${homeDir}/.leetcode-site-generator.json`);
+    let json = fs.readFileSync(sessionPath);
     json = JSON.parse(json);
     if (json && json.session) {
       return json.session;
@@ -72,13 +71,13 @@ const getSession = async () => { // eslint-disable-line
     const session = await login(username, password);
     // NOTE expire
     fs.writeFile(
-      `${homeDir}/.leetcode-site-generator.json`,
+      sessionPath,
       JSON.stringify({
         session,
       }),
       (err) => {
         if (err) {
-          console.error('write ~/.leetcode-site-generator.json file error');
+          console.error(`write ${sessionPath} file error`);
         }
       },
     );

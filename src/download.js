@@ -1,8 +1,6 @@
 const fs = require('fs');
-const {
-  getAllACQuestions,
-  getAcCode,
-} = require('./leetcode');
+const path = require('path');
+const { getAllACQuestions, getAcCode } = require('./leetcode');
 
 const toDoc = ({
   title,
@@ -30,7 +28,7 @@ ${code}
 };
 
 const download = async () => {
-  const codeDir = `${__dirname}/code`;
+  const codeDir = path.join(__dirname, 'docs');
   const questions = await getAllACQuestions();
   const isCodeDirExist = fs.existsSync(codeDir);
   if (!isCodeDirExist) {
@@ -47,7 +45,7 @@ const download = async () => {
     } = await getAcCode(current.titleSlug);
     current.code = code;
     current.lang = lang;
-    fs.writeFile(`${codeDir}/${current.titleSlug}.md`, toDoc(current), (err) => {
+    fs.writeFile(path.join(codeDir, `${current.titleSlug}.md`), toDoc(current), (err) => {
       if (err) {
         console.error(`${current.titleSlug} write error`);
       }
@@ -57,5 +55,4 @@ const download = async () => {
   aux([...questions]);
 };
 
-download();
 module.exports = download;
