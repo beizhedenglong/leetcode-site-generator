@@ -1,7 +1,10 @@
 {
   "name": "leetcode-site-generator",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "./src/download.js",
+  "bin": {
+    "leetcode-site": "./src/cli.js"
+  },
   "repository": "https://github.com/beizhedenglong/leetcode-site-generator.git",
   "author": "Victor Wang <wang_shaojie@icloud.com>",
   "license": "MIT",
