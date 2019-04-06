@@ -6,7 +6,7 @@ const download = async () => {
   const problemsPath = 'problems.json';
   const problems = [];
   const questions = await getAllACQuestions();
-  const spinner = ora('Downloading accepted code.').start();
+  const spinner = ora('Downloading accepted code...').start();
   const aux = async (xs = []) => {
     if (xs.length === 0) {
       return;

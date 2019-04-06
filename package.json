@@ -13,9 +13,10 @@
     "commander": "^2.20.0",
     "enquirer": "^2.3.0",
     "graphql-request": "^1.8.2",
-    "inquirer": "^6.2.2",
+    "node-fs-extra": "^0.8.2",
     "ora": "^3.4.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "shelljs": "^0.8.3"
   },
   "devDependencies": {
     "eslint": "^5.15.3",
