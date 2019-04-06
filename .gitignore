@@ -63,3 +63,4 @@ typings/
 docs
 
 problems.json
+.DS_Store
