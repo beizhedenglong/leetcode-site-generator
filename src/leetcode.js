@@ -35,6 +35,7 @@ const login = async (username, password) => {
       password,
     },
   };
+  // NOTE handle login failure
   const loginRes = await request.post(options);
   const loginCookie = parseCookie(loginRes);
   const session = {
