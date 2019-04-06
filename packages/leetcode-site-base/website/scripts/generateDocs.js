@@ -22,7 +22,7 @@ sidebar_label: ${title}
 ${content}
 </div>
 
-## Code
+## Solution
 \`\`\`${lang}
 ${code}
 \`\`\``
