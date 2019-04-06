@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "download": "rm -rf ./problems.json && leetcode-site download && npm run generate-docs",
+    "download": "leetcode-site download && npm run generate-docs",
     "generate-docs": "node ./scripts/generateDocs.js",
     "clear": "node ./scripts/clear.js",
     "start": "docusaurus-start",
