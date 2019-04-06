@@ -1,17 +1,15 @@
 const { GraphQLClient } = require('graphql-request');
 const fs = require('fs');
-const os = require('os');
 const { prompt } = require('enquirer');
-const path = require('path');
-
+const ora = require('ora');
 const {
   parseCookie,
   request,
   getHeaders,
   unicodeToChar,
+  getSessionPath,
 } = require('./utils');
 
-const homeDir = os.homedir();
 const baseUrl = 'https://leetcode.com';
 const loginUrl = `${baseUrl}/accounts/login/`;
 const graphqlUrl = `${baseUrl}/graphql`;
@@ -35,8 +33,10 @@ const login = async (username, password) => {
       password,
     },
   };
-  // NOTE handle login failure
   const loginRes = await request.post(options);
+  if (loginRes.statusCode !== 302) {
+    throw new Error('login failure');
+  }
   const loginCookie = parseCookie(loginRes);
   const session = {
     LEETCODE_SESSION: loginCookie.LEETCODE_SESSION,
@@ -60,29 +60,37 @@ const getUsernameAndPass = async () => prompt([
 
 
 const getSession = async () => { // eslint-disable-line
-  const sessionPath = path.join(homeDir, '/.leetcode-site-generator.json');
-  try {
+  const sessionPath = getSessionPath();
+  if (fs.existsSync(sessionPath)) {
     let json = fs.readFileSync(sessionPath);
     json = JSON.parse(json);
     if (json && json.session) {
       return json.session;
     }
-  } catch (error) {
-    const { username, password } = await getUsernameAndPass();
-    const session = await login(username, password);
-    // NOTE expire
-    fs.writeFile(
-      sessionPath,
-      JSON.stringify({
-        session,
-      }),
-      (err) => {
-        if (err) {
-          console.error(`write ${sessionPath} file error`);
-        }
-      },
-    );
-    return session;
+  } else {
+    const spinner = ora('Login...');
+    try {
+      const { username, password } = await getUsernameAndPass();
+      spinner.start();
+      const session = await login(username, password);
+      fs.writeFile(
+        sessionPath,
+        JSON.stringify({
+          session,
+        }),
+        (err) => {
+          if (err) {
+            console.error(`write ${sessionPath} file error`);
+          }
+        },
+      );
+      spinner.stop();
+      return session;
+    } catch (error) {
+      spinner.stop();
+      console.error('Login failure, retry...');
+      return getSession();
+    }
   }
 };
 

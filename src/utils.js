@@ -1,4 +1,6 @@
 const { promisify } = require('util');
+const homedir = require('os').homedir();
+const path = require('path');
 let request = require('request');
 
 const parseCookie = response => response.headers['set-cookie']
@@ -22,9 +24,12 @@ const getHeaders = session => ({
 const unicodeToChar = text => text.replace(/\\u[\dA-F]{4}/gi,
   match => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
 
+const getSessionPath = () => path.join(homedir, '.leetcode-site-generator.json');
+
 module.exports = {
   parseCookie,
   request,
   getHeaders,
   unicodeToChar,
+  getSessionPath,
 };
