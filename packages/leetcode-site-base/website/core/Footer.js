@@ -1,4 +1,3 @@
-/* eslint-disable */
 const React = require('react');
 
 class Footer extends React.Component {
@@ -18,7 +17,7 @@ class Footer extends React.Component {
   render() {
     return (
       <footer className="nav-footer" id="footer">
-        hello
+        <section className="copyright">Powered By <a href={this.props.config.repoUrl}>LeetCode Site Generator</a></section>
       </footer>
     );
   }

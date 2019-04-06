@@ -22,10 +22,12 @@ const users = [
   },
 ];
 
+const repoUrl = 'https://github.com/beizhedenglong/leetcode-site-generator';
+
 const siteConfig = {
   title: 'LeetCode Site Generator', // Title for your website.
-  tagline: 'A website for testing',
-  url: 'https://your-docusaurus-test-site.com', // Your website URL
+  tagline: 'Generate your personal LeetCode website with one command!',
+  url: repoUrl, // Your website URL
   baseUrl: '/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
@@ -33,7 +35,7 @@ const siteConfig = {
 
   // Used for publishing and more
   projectName: 'LeetCode Site Generator',
-  organizationName: 'facebook',
+  // organizationName: 'facebook',
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
@@ -43,6 +45,10 @@ const siteConfig = {
     {
       doc: sidebars.docs.Problems[0],
       label: 'Problems',
+    },
+    {
+      href: repoUrl,
+      label: 'GitHub',
     },
   ],
 
@@ -108,7 +114,7 @@ const siteConfig = {
 
   // You may provide arbitrary config keys to be used as needed by your
   // template. For example, if you need your repo's URL...
-  //   repoUrl: 'https://github.com/facebook/test-site',
+  repoUrl,
 };
 
 module.exports = siteConfig;
