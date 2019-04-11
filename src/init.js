@@ -12,6 +12,6 @@ module.exports = () => {
   }
   const websiteDirPath = path.join(__dirname, '..', 'packages', 'leetcode-site-base');
   const spinner = ora('Copying files into leetcode-site-base...').start();
-  shell.cp('-r', websiteDirPath);
+  shell.cp('-r', websiteDirPath, destination);
   spinner.stop();
 };
