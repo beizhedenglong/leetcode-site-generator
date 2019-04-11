@@ -11,3 +11,18 @@ Generate your personal LeetCode website with one command!
 2. Go to the `website` directory of `leetcode-site init`, run `yarn download`. It will ask you to input your LeetCode username and password.
    ![login](./images/login.png)
 3. Waiting for downloading process finished, then run `yarn & yarn start`.
+
+## Publish To Github Pages
+1. Change the following keys in `siteConfig.js`
+```js
+ const siteConfig = {
+   // ...
+   url: 'https://beizhedenglong.github.io', // Your website URL
+   baseUrl: '/leetcode-site-generator/', // Base URL for your project */
+   projectName: 'leetcode-site-generator', // Your project name
+   organizationName: 'beizhedenglong', // Your github username
+   // ...
+ }
+```
+
+2. Run `GIT_USER=<your github username> CURRENT_BRANCH=master USE_SSH=true yarn run publish-gh-pages`
