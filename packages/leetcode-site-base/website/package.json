@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "docusaurus": "^1.7.3",
-    "leetcode-site-generator": "^0.0.1"
+    "leetcode-site-generator": "^0.0.4"
   }
 }
