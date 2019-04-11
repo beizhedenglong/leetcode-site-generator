@@ -1,6 +1,6 @@
 {
   "name": "leetcode-site-generator",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "./src/download.js",
   "bin": {
     "leetcode-site": "./src/cli.js"
