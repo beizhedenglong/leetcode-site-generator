@@ -1,6 +1,8 @@
 # LeetCode Site Generator
 Generate your personal LeetCode website with one command!
 
+![screenshot](./images/screenshot.png)
+
 ## Installation
 
 `yarn global add leetcode-site-generator` or `npm i -g leetcode-site-generator`
