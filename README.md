@@ -1,6 +1,8 @@
 # LeetCode Site Generator
 Generate your personal LeetCode website with one command!
 
+## Example Website
+[leetcode-solutions](https://beizhedenglong.github.io/leetcode-solutions/)
 ![screenshot](./images/screenshot.png)
 
 ## Installation
