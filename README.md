@@ -5,6 +5,10 @@ Generate your personal LeetCode website with one command!
 [leetcode-solutions](https://beizhedenglong.github.io/leetcode-solutions/)
 ![screenshot](./images/screenshot.png)
 
+## Requirements
+- Make sure you have the recent version of [`node.js`](https://nodejs.org) installed.
+- [`yarn`](https://yarnpkg.com/en/)(optional), you can use `npm`.
+
 ## Installation
 
 `yarn global add leetcode-site-generator` or `npm i -g leetcode-site-generator`
