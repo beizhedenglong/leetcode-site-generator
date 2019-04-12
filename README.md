@@ -3,7 +3,8 @@ Generate your personal LeetCode website with one command!
 
 ## Example Website
 [leetcode-solutions](https://beizhedenglong.github.io/leetcode-solutions/)
-![screenshot](./images/screenshot.png)
+
+[![screenshot](./images/screenshot.png)](https://beizhedenglong.github.io/leetcode-solutions/)
 
 ## Requirements
 - Make sure you have the recent version of [`node.js`](https://nodejs.org) installed.
