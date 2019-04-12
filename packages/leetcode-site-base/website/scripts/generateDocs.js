@@ -6,7 +6,7 @@ const sidebars = require('../sidebars.json');
 const toDoc = ({
   title,
   titleSlug,
-  lang,
+  lang = '',
   code,
   content,
 }) => {
@@ -22,7 +22,7 @@ sidebar_label: ${title}
 ${content}
 </div>
 
-## Solution
+## Solution(${lang})
 \`\`\`${lang}
 ${code}
 \`\`\``
