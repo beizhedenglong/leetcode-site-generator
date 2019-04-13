@@ -27,7 +27,7 @@ Generate your personal LeetCode website with one command!
  const siteConfig = {
    // ...
    url: 'https://beizhedenglong.github.io', // Your website URL
-   baseUrl: '/leetcode-site-generator/', // Base URL for your project */
+   baseUrl: '/leetcode-site-generator/', // Base URL for your project
    projectName: 'leetcode-site-generator', // Your project name
    organizationName: 'beizhedenglong', // Your github username
    // ...
