@@ -13,6 +13,6 @@ module.exports = {
     ecmaVersion: 2018,
   },
   rules: {
-    "import/prefer-default-export": "off"
+    'import/prefer-default-export': 'off',
   },
 };

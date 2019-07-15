@@ -1,5 +1,6 @@
 const { GraphQLClient } = require('graphql-request');
 const fs = require('fs');
+const nodeUrl = require('url');
 const { prompt } = require('enquirer');
 const ora = require('ora');
 const {
@@ -150,8 +151,9 @@ const getAcCode = async (questionSlug) => {
     const {
       url,
     } = acSubmissions[0];
-    const requestWithSession = await createRequest(`${baseUrl}/${url}`);
-    const response = await requestWithSession(`${baseUrl}/${url}`);
+    const submissionUrl = nodeUrl.resolve(baseUrl, url);
+    const requestWithSession = await createRequest(submissionUrl);
+    const response = await requestWithSession(submissionUrl);
     // NOTE unreliable
     const matches = response.body.match(/submissionCode\s*:\s*'([\s\S]*)'\s*,\s*editCodeUrl/);
     if (matches[1]) {
