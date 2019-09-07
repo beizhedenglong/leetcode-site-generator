@@ -42,6 +42,7 @@ const login = async (username, password) => {
   const session = {
     LEETCODE_SESSION: loginCookie.LEETCODE_SESSION,
     csrftoken: loginCookie.csrftoken,
+    expires: loginCookie.expires,
   };
   return session;
 };
@@ -65,6 +66,13 @@ const getSession = async () => { // eslint-disable-line
   if (fs.existsSync(sessionPath)) {
     let json = fs.readFileSync(sessionPath);
     json = JSON.parse(json);
+    const { session } = json;
+    if (!session.expires
+      || (new Date(session.expires) <= new Date(Date.now()))
+    ) {
+      fs.unlinkSync(sessionPath);
+      return getSession();
+    }
     if (json && json.session) {
       return json.session;
     }
