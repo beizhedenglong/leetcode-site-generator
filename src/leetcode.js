@@ -1,120 +1,82 @@
 const { GraphQLClient } = require('graphql-request');
 const fs = require('fs');
 const nodeUrl = require('url');
-const { prompt } = require('enquirer');
 const ora = require('ora');
+const puppeteer = require('puppeteer');
 const {
-  parseCookie,
   request,
   getHeaders,
   unicodeToChar,
-  getSessionPath,
+  getCookiePath,
 } = require('./utils');
 
 const baseUrl = 'https://leetcode.com';
-const loginUrl = `${baseUrl}/accounts/login/`;
 const graphqlUrl = `${baseUrl}/graphql`;
 
-
-const login = async (username, password) => {
-  const response = await request(loginUrl);
-  const {
-    csrftoken,
-  } = parseCookie(response);
-  const options = {
-    url: loginUrl,
-    headers: {
-      Origin: baseUrl,
-      Referer: loginUrl,
-      Cookie: `csrftoken=${csrftoken};`,
-    },
-    form: {
-      csrfmiddlewaretoken: csrftoken,
-      login: username,
-      password,
-    },
-  };
-  const loginRes = await request.post(options);
-  if (loginRes.statusCode !== 302) {
-    throw new Error('login failure');
-  }
-  const loginCookie = parseCookie(loginRes);
-  const session = {
-    LEETCODE_SESSION: loginCookie.LEETCODE_SESSION,
-    csrftoken: loginCookie.csrftoken,
-    expires: loginCookie.expires,
-  };
-  return session;
+const login = async () => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  await page.goto('https://leetcode.com/accounts/login/');
+  await page.waitForNavigation();
+  const cookies = await page.cookies();
+  await browser.close();
+  return cookies.reduce((acc, cookie) => {
+    const { name } = cookie;
+    acc[name] = cookie;
+    return acc;
+  }, {});
 };
 
-const getUsernameAndPass = async () => prompt([
-  {
-    type: 'input',
-    name: 'username',
-    message: 'username:',
-  },
-  {
-    type: 'password',
-    name: 'password',
-    message: 'password:',
-  },
-]);
-
-
-const getSession = async () => { // eslint-disable-line
-  const sessionPath = getSessionPath();
-  if (fs.existsSync(sessionPath)) {
-    let json = fs.readFileSync(sessionPath);
+const getCookie = async () => { // eslint-disable-line
+  const cookiePath = getCookiePath();
+  if (fs.existsSync(cookiePath)) {
+    let json = fs.readFileSync(cookiePath);
     json = JSON.parse(json);
-    const { session } = json;
-    if (!session.expires
-      || (new Date(session.expires) <= new Date(Date.now()))
+    const { cookies } = json;
+    const { LEETCODE_SESSION } = cookies;
+    if (!LEETCODE_SESSION
+      || (new Date(LEETCODE_SESSION.expires) <= new Date().getTime() / 1000)
     ) {
-      fs.unlinkSync(sessionPath);
-      return getSession();
+      console.error('Cookie expires, retry...');
+      fs.unlinkSync(cookiePath);
+      return getCookie();
     }
-    if (json && json.session) {
-      return json.session;
-    }
-  } else {
-    const spinner = ora('Login...');
-    try {
-      const { username, password } = await getUsernameAndPass();
-      spinner.start();
-      const session = await login(username, password);
-      fs.writeFile(
-        sessionPath,
-        JSON.stringify({
-          session,
-        }),
-        (err) => {
-          if (err) {
-            console.error(`write ${sessionPath} file error`);
-          }
-        },
-      );
-      spinner.stop();
-      return session;
-    } catch (error) {
-      spinner.stop();
-      console.error('Login failure, retry...');
-      return getSession();
-    }
+    return Object.keys(cookies).reduce((acc, name) => {
+      acc[name] = cookies[name].value;
+      return acc;
+    }, {});
+  }
+  const spinner = ora('Login...');
+  try {
+    spinner.start();
+    const cookies = await login();
+    fs.writeFileSync(
+      cookiePath,
+      JSON.stringify({
+        cookies,
+      }),
+    );
+    spinner.stop();
+    return cookies;
+  } catch (error) {
+    spinner.stop();
+    console.error('Login failure, retry...', error);
+    return getCookie();
   }
 };
 
 const createGqlRequest = async () => {
-  const session = await getSession();
+  const cookies = await getCookie();
   const client = new GraphQLClient(graphqlUrl, {
-    headers: getHeaders(session),
+    headers: getHeaders(cookies),
   });
   return client.request.bind(client);
 };
 
 const createRequest = async () => {
-  const session = await getSession();
+  const cookies = await getCookie();
   return url => request(url, {
-    headers: getHeaders(session),
+    headers: getHeaders(cookies),
   });
 };
 
@@ -177,4 +139,5 @@ const getAcCode = async (questionSlug) => {
 module.exports = {
   getAllACQuestions,
   getAcCode,
+  getCookie,
 };

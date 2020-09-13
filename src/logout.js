@@ -1,7 +1,7 @@
 const fs = require('fs');
-const { getSessionPath } = require('./utils');
+const { getCookiePath } = require('./utils');
 
 module.exports = () => {
-  const sessionPath = getSessionPath();
-  fs.unlinkSync(sessionPath);
+  const cookiePath = getCookiePath();
+  fs.unlinkSync(cookiePath);
 };
