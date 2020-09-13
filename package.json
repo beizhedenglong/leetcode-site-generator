@@ -1,6 +1,6 @@
 {
   "name": "leetcode-site-generator",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "main": "./src/download.js",
   "bin": {
     "leetcode-site": "./src/cli.js"
@@ -15,6 +15,7 @@
     "graphql-request": "^1.8.2",
     "node-fs-extra": "^0.8.2",
     "ora": "^3.4.0",
+    "puppeteer": "^5.3.0",
     "request": "^2.88.0",
     "shelljs": "^0.8.3"
   },
