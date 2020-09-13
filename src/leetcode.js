@@ -29,13 +29,13 @@ const login = async () => {
 
 const getCookie = async () => { // eslint-disable-line
   const cookiePath = getCookiePath();
-  if (fs.existsSync(cookiePath)) {
+  try {
     let json = fs.readFileSync(cookiePath);
     json = JSON.parse(json);
     const { cookies } = json;
     const { LEETCODE_SESSION } = cookies;
     if (!LEETCODE_SESSION
-      || (new Date(LEETCODE_SESSION.expires) <= new Date().getTime() / 1000)
+    || (new Date(LEETCODE_SESSION.expires) <= new Date().getTime() / 1000)
     ) {
       console.error('Cookie expires, retry...');
       fs.unlinkSync(cookiePath);
@@ -45,23 +45,25 @@ const getCookie = async () => { // eslint-disable-line
       acc[name] = cookies[name].value;
       return acc;
     }, {});
-  }
-  const spinner = ora('Login...');
-  try {
-    spinner.start();
-    const cookies = await login();
-    fs.writeFileSync(
-      cookiePath,
-      JSON.stringify({
-        cookies,
-      }),
-    );
-    spinner.stop();
-    return cookies;
   } catch (error) {
-    spinner.stop();
-    console.error('Login failure, retry...', error);
-    return getCookie();
+    const spinner = ora('Login...');
+    try {
+      spinner.start();
+      const cookies = await login();
+      fs.writeFileSync(
+        cookiePath,
+        JSON.stringify({
+          cookies,
+        }),
+      );
+      spinner.stop();
+      return cookies;
+    // eslint-disable-next-line no-shadow
+    } catch (error) {
+      spinner.stop();
+      console.error('Login failure, retry...', error);
+      return getCookie();
+    }
   }
 };
 
