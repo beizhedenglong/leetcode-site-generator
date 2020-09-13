@@ -84,6 +84,7 @@ const createRequest = async () => {
 
 const getAllACQuestions = async () => {
   const gqlRequest = await createGqlRequest();
+  const spinner = ora('Fetching all questions...').start();
   const json = await gqlRequest(`{
     allQuestions{
       title
@@ -92,6 +93,7 @@ const getAllACQuestions = async () => {
       content
     }
   }`);
+  spinner.stop();
   const filterAcQuestions = (questions = []) => questions.filter(({
     status,
   }) => status === 'ac');
