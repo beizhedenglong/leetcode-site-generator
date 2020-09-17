@@ -10,7 +10,8 @@ commander
 
 commander
   .command('download')
-  .description('Download your accepted code from LeetCode.')
+  .option('-a, --all', 'Download all your accepted code from LeetCode.')
+  .description('Download your new accepted code from LeetCode.')
   .action(download);
 
 commander
