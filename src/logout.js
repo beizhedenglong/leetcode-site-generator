@@ -1,7 +1,5 @@
-const fs = require('fs');
-const { getCookiePath } = require('./utils');
+const { removeConfig } = require('./utils');
 
 module.exports = () => {
-  const cookiePath = getCookiePath();
-  fs.unlinkSync(cookiePath);
+  removeConfig('cookies');
 };

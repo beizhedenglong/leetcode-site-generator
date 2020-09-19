@@ -11,4 +11,4 @@ sidebars.docs.Problems.forEach((titleSlug) => {
 });
 sidebars.docs.Problems = [];
 
-fs.writeFileSync(sidebarsPath, JSON.stringify(sidebars));
+fs.writeFileSync(sidebarsPath, JSON.stringify(sidebars, null, 2));

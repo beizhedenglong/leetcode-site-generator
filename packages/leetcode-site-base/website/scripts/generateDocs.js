@@ -64,7 +64,7 @@ problems.forEach((problem) => {
     }
   });
   sidebars.docs.Problems.push(problem.titleSlug);
-  fs.writeFileSync(sidebarsPath, JSON.stringify(sidebars));
+  fs.writeFileSync(sidebarsPath, JSON.stringify(sidebars, null, 2));
 });
 const indexDoc = sidebars.docs.Problems[0];
 const staticPath = path.join(__dirname, '..', 'static');
