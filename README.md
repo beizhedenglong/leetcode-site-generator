@@ -35,3 +35,18 @@ Generate your personal LeetCode website with one command!
 ```
 
 2. Run `GIT_USER=<your github username> CURRENT_BRANCH=master USE_SSH=true yarn run publish-gh-pages`
+
+
+## List of commands
+
+```md
+Options:
+  -V, --version       output the version number
+  -h, --help          output usage information
+
+Commands:
+  download [options]  Download your new accepted code from LeetCode.
+  init                Generate your personal LeetCode website.
+  login               Log in to your Leetcode account.
+  logout              Log out of current account.
+```

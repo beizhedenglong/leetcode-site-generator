@@ -1,5 +1,6 @@
 const { promisify } = require('util');
 const homedir = require('os').homedir();
+const fs = require('fs');
 const path = require('path');
 let request = require('request');
 
@@ -24,12 +25,41 @@ const getHeaders = session => ({
 const unicodeToChar = text => text.replace(/\\u[\dA-F]{4}/gi,
   match => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
 
-const getCookiePath = () => path.join(homedir, '.leetcode-site-generator.json');
+const configPath = path.join(homedir, '.leetcode-site-generator.json');
+const getConfig = () => {
+  try {
+    const config = JSON.parse(fs.readFileSync(configPath));
+    return config;
+  } catch (error) {
+    return {
+      country: undefined,
+      cookies: undefined,
+    };
+  }
+};
+const stringify = data => JSON.stringify(data, null, 2);
+
+const setConfig = (payload = {}) => {
+  const config = {
+    ...getConfig(),
+    ...payload,
+  };
+  fs.writeFileSync(configPath, stringify(config));
+};
+
+const removeConfig = (key) => {
+  const config = getConfig();
+  config[key] = undefined;
+  fs.writeFileSync(configPath, stringify(config));
+};
 
 module.exports = {
   parseCookie,
   request,
   getHeaders,
   unicodeToChar,
-  getCookiePath,
+  getConfig,
+  setConfig,
+  removeConfig,
+  stringify,
 };

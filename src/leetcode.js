@@ -1,44 +1,75 @@
 const { GraphQLClient } = require('graphql-request');
-const fs = require('fs');
 const nodeUrl = require('url');
 const ora = require('ora');
-const puppeteer = require('puppeteer');
+const inquirer = require('inquirer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
 const {
   request,
   getHeaders,
   unicodeToChar,
-  getCookiePath,
+  removeConfig,
+  getConfig,
+  setConfig,
 } = require('./utils');
 
-const baseUrl = 'https://leetcode.com';
+puppeteer.use(StealthPlugin());
+
+
+const { country } = getConfig();
+
+const usUrl = 'https://leetcode.com';
+const cnUrl = 'https://leetcode-cn.com';
+const baseUrl = country === 'us' ? usUrl : cnUrl;
 const graphqlUrl = `${baseUrl}/graphql`;
 
 const login = async () => {
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
-  await page.goto('https://leetcode.com/accounts/login/');
-  await page.waitForNavigation();
-  const cookies = await page.cookies();
-  await browser.close();
-  return cookies.reduce((acc, cookie) => {
-    const { name } = cookie;
-    acc[name] = cookie;
-    return acc;
-  }, {});
+  let loginUrl = baseUrl;
+  if (country === undefined) {
+    loginUrl = (await inquirer.prompt({
+      name: 'baseUrl',
+      type: 'list',
+      message: 'Log in to:',
+      choices: [usUrl, cnUrl],
+    })).baseUrl;
+    setConfig({ country: loginUrl === cnUrl ? 'cn' : 'us' });
+  }
+  loginUrl += '/accounts/login/';
+
+  const spinner = ora('Login...').start();
+  try {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    await page.goto(loginUrl);
+    await page.waitForFunction('window.location.href.indexOf("login") === -1');
+    let cookies = await page.cookies();
+    await browser.close();
+    spinner.stop();
+    cookies = cookies.reduce((acc, cookie) => {
+      const { name } = cookie;
+      acc[name] = cookie;
+      return acc;
+    }, {});
+    setConfig({ cookies });
+    return cookies;
+  } catch (error) {
+    console.error('Login failure, retry...', error.message);
+    throw error;
+  } finally {
+    spinner.stop();
+  }
 };
 
 const getCookie = async () => { // eslint-disable-line
-  const cookiePath = getCookiePath();
   try {
-    let json = fs.readFileSync(cookiePath);
-    json = JSON.parse(json);
-    const { cookies } = json;
+    const { cookies } = getConfig();
     const { LEETCODE_SESSION } = cookies;
     if (!LEETCODE_SESSION
     || (new Date(LEETCODE_SESSION.expires) <= new Date().getTime() / 1000)
     ) {
       console.error('Cookie expires, retry...');
-      fs.unlinkSync(cookiePath);
+      removeConfig('cookies');
       return getCookie();
     }
     return Object.keys(cookies).reduce((acc, name) => {
@@ -46,24 +77,8 @@ const getCookie = async () => { // eslint-disable-line
       return acc;
     }, {});
   } catch (error) {
-    const spinner = ora('Login...');
-    try {
-      spinner.start();
-      const cookies = await login();
-      fs.writeFileSync(
-        cookiePath,
-        JSON.stringify({
-          cookies,
-        }),
-      );
-      spinner.stop();
-      return cookies;
-    // eslint-disable-next-line no-shadow
-    } catch (error) {
-      spinner.stop();
-      console.error('Login failure, retry...', error);
-      return getCookie();
-    }
+    const cookies = await login();
+    return cookies;
   }
 };
 
@@ -114,6 +129,29 @@ const acCodeQuery = (questionSlug) => {
   }`;
   return query;
 };
+const getSubmissionCode = async ({ url, id } = {}, isUS = true) => {
+  if (isUS) {
+    const submissionUrl = nodeUrl.resolve(baseUrl, url);
+    const requestWithSession = await createRequest(submissionUrl);
+    const response = await requestWithSession(submissionUrl);
+    // NOTE unreliable
+    const matches = response.body.match(/submissionCode\s*:\s*'([\s\S]*)'\s*,\s*editCodeUrl/);
+    if (matches[1]) {
+      return unicodeToChar(matches[1]);
+    }
+  }
+  const gqlRequest = await createGqlRequest();
+  const json = await gqlRequest(`{
+    submissionDetail(submissionId: ${id}) {
+      id
+      code
+      statusDisplay
+    }
+  }`);
+  const detail = json.submissionDetail || {};
+  return detail.code;
+};
+
 const getAcCode = async (questionSlug) => {
   const qglRequest = await createGqlRequest();
   const json = await qglRequest(acCodeQuery(questionSlug));
@@ -122,25 +160,17 @@ const getAcCode = async (questionSlug) => {
     statusDisplay,
   }) => statusDisplay === 'Accepted');
   if (acSubmissions.length > 0) {
-    const {
-      url,
-    } = acSubmissions[0];
-    const submissionUrl = nodeUrl.resolve(baseUrl, url);
-    const requestWithSession = await createRequest(submissionUrl);
-    const response = await requestWithSession(submissionUrl);
-    // NOTE unreliable
-    const matches = response.body.match(/submissionCode\s*:\s*'([\s\S]*)'\s*,\s*editCodeUrl/);
-    if (matches[1]) {
-      return {
-        code: unicodeToChar(matches[1]),
-        ...acSubmissions[0],
-      };
-    }
+    const code = await getSubmissionCode(acSubmissions[0], country === 'us');
+    return {
+      code,
+      ...acSubmissions[0],
+    };
   }
   return null;
 };
 
 module.exports = {
+  login,
   getAllACQuestions,
   getAcCode,
   getCookie,

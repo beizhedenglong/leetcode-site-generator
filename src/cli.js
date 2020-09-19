@@ -4,6 +4,7 @@ const packageJson = require('../package.json');
 const download = require('./download');
 const init = require('./init');
 const logout = require('./logout');
+const { login } = require('./leetcode');
 
 commander
   .version(packageJson.version);
@@ -20,8 +21,13 @@ commander
   .action(init);
 
 commander
+  .command('login')
+  .description('Log in to your Leetcode account.')
+  .action(login);
+
+commander
   .command('logout')
-  .description('Logout current LeetCode account')
+  .description('Log out of current account.')
   .action(logout);
 
 commander.parse(process.argv);
