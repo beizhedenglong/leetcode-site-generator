@@ -10,6 +10,10 @@ Generate your personal LeetCode website with one command!
 - Make sure you have the recent version of [`node.js`](https://nodejs.org) installed.
 - [`yarn`](https://yarnpkg.com/en/)(optional), you can use `npm`.
 
+
+## Features
+- Support both `leetcode.com` and `leetcode-cn.com` accounts.
+
 ## Installation
 
 `yarn global add leetcode-site-generator` or `npm i -g leetcode-site-generator`
@@ -21,7 +25,7 @@ Generate your personal LeetCode website with one command!
    ![login](./images/login.png)
 3. Waiting for downloading process finished, then run `yarn & yarn start`.
 
-## Publish To Github Pages
+## Publish to Github pages
 1. Change the following keys in `siteConfig.js`
 ```js
  const siteConfig = {
