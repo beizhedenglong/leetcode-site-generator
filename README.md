@@ -47,13 +47,14 @@ Generate your personal LeetCode website with one command!
 Usage: leetcode-site [options] [command]
 
 Options:
-  -V, --version  output the version number
-  -h, --help     output usage information
+  -V, --version       output the version number
+  -h, --help          output usage information
 
 Commands:
-  download       Download your accepted code from LeetCode.
-  init           Generate your personal LeetCode website.
-  logout         Logout current LeetCode account
+  download [options]  Download your new accepted code from LeetCode.
+  init                Generate your personal LeetCode website.
+  login               Log in to your Leetcode account.
+  logout              Log out of current account.
 ```
 
 ### download
